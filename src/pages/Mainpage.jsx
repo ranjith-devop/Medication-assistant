@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
+import ChatAssistant from "../components/Chatassistant/ChatAssistant";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PersonIcon from '@mui/icons-material/Person';
+import MenuIcon from '@mui/icons-material/Menu';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Home,
-  Users,
   AlertTriangle,
   Cpu,
   PlusCircle,
   Search,
   Pocket,
-  MessageCircle,
-  Bell,
-  Settings,
-  Menu as MenuIcon,
+  
 } from "lucide-react";
 import {
   AppBar,
@@ -29,6 +30,8 @@ import {
   TableRow,
   Drawer,
   CssBaseline,
+  Menu,
+  MenuItem,
   List,
   ListItemButton,
   ListItemIcon,
@@ -74,10 +77,11 @@ const CardButton = styled(Button, { shouldForwardProp: (p) => p !== "gradient" }
   },
 }));
 
-export default function MedicalAssistantMainPage() {
+export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const [gradientAngle, setGradientAngle] = useState(0);
   const [query, setQuery] = useState("");
   const [selectedCard, setSelectedCard] = useState(null);
@@ -87,7 +91,7 @@ export default function MedicalAssistantMainPage() {
   ]);
 
   const stats = [
-    { id: 1, title: "Residents", value: 24, icon: Users },
+  { id: 1, title: "Residents", value: 24, icon: PersonIcon },
     { id: 2, title: "Medicines", value: 86, icon: Pocket },
     { id: 3, title: "Expiring Soon", value: 6, icon: AlertTriangle },
     { id: 4, title: "AI Actions", value: 12, icon: Cpu },
@@ -96,7 +100,7 @@ export default function MedicalAssistantMainPage() {
   const cards = [
     { id: "add", title: "Add Medicine", desc: "Quickly add medicine with expiry", icon: PlusCircle, color: "#10B981,#14B8A6" },
     { id: "check", title: "Expiry Check", desc: "Scan inventory and get alerts", icon: AlertTriangle, color: "#FBBF24,#F97316" },
-    { id: "res", title: "Residents", desc: "View & manage residents' profiles", icon: Users, color: "#38BDF8,#6366F1" },
+  { id: "res", title: "Residents", desc: "View & manage residents' profiles", icon: PersonIcon, color: "#38BDF8,#6366F1" },
     { id: "ai", title: "AI Assistant", desc: "Ask the assistant to a or r meds", icon: Cpu, color: "#EC4899,#8B5CF6" },
   ];
 
@@ -108,6 +112,15 @@ export default function MedicalAssistantMainPage() {
   const filteredNotifications = notifications.filter((n) => n.text.toLowerCase().includes(query.toLowerCase()));
 
   const handleDrawerToggle = () => setMobileOpen((s) => !s);
+
+  // Settings menu (theme switch)
+  const [settingsAnchor, setSettingsAnchor] = useState(null);
+  const openSettings = (e) => setSettingsAnchor(e.currentTarget);
+  const closeSettings = () => setSettingsAnchor(null);
+  const handleSetTheme = (mode) => {
+    setThemeMode?.(mode);
+    closeSettings();
+  };
 
   // Sidebar contents extracted to reuse for drawer & persistent sidebar
   const SidebarContent = (
@@ -150,7 +163,7 @@ export default function MedicalAssistantMainPage() {
 
           <ListItemButton>
             <ListItemIcon>
-              <Users size={18} />
+              <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Residents" />
           </ListItemButton>
@@ -192,7 +205,15 @@ export default function MedicalAssistantMainPage() {
       <CssBaseline />
 
       {/* Top AppBar */}
-      <AppBar position="fixed" elevation={0} sx={{ background: "rgba(255,255,255,0.85)", backdropFilter: "blur(6px)", color: "text.primary" }}>
+      <AppBar
+        position="fixed"
+        elevation={0}
+        sx={{
+          background: (theme) => `rgba(${theme.palette.mode === 'dark' ? '6,6,8' : '255,255,255'},${theme.palette.mode === 'dark' ? 0.16 : 0.85})`,
+          backdropFilter: "blur(6px)",
+          color: "text.primary",
+        }}
+      >
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
           <Box display="flex" alignItems="center" gap={1}>
             {isMobile && (
@@ -215,11 +236,22 @@ export default function MedicalAssistantMainPage() {
             </Paper>
 
             <IconButton aria-label="notifications">
-              <Bell />
+              <NotificationsIcon />
             </IconButton>
-            <IconButton aria-label="settings">
-              <Settings />
+            <IconButton aria-label="settings" onClick={openSettings} aria-controls={settingsAnchor ? 'settings-menu' : undefined} aria-haspopup="true">
+              <SettingsIcon />
             </IconButton>
+            <Menu
+              id="settings-menu"
+              anchorEl={settingsAnchor}
+              open={Boolean(settingsAnchor)}
+              onClose={closeSettings}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <MenuItem selected={themeMode === 'light'} onClick={() => handleSetTheme('light')}>Light Theme</MenuItem>
+              <MenuItem selected={themeMode === 'dark'} onClick={() => handleSetTheme('dark')}>Dark Theme</MenuItem>
+            </Menu>
           </Box>
         </Toolbar>
       </AppBar>
@@ -370,15 +402,8 @@ export default function MedicalAssistantMainPage() {
           </Box>
         </Card>
 
-        {/* Floating AI FAB */}
-        <Fab
-          aria-label="AI Assistant"
-          onClick={() => alert('Opening AI Assistant (mock)')}
-          sx={{ position: 'fixed', right: 20, bottom: 20, background: 'linear-gradient(135deg,#ff7ab6,#7c3aed)', color: '#fff' }}
-        >
-          <MessageCircle />
-        </Fab>
+        <ChatAssistant open={chatOpen} onClose={() => setChatOpen(false)} />
       </Box>
     </GradientBox>
   );
-}
+}   
