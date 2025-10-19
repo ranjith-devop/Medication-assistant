@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import ChatAssistant from "../components/Chatassistant/ChatAssistant";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
@@ -80,6 +81,7 @@ const CardButton = styled(Button, { shouldForwardProp: (p) => p !== "gradient" }
 export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [gradientAngle, setGradientAngle] = useState(0);
@@ -154,11 +156,16 @@ export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
 
       <Box p={1} flex={1}>
         <List disablePadding>
-          <ListItemButton>
+          <ListItemButton
+            onClick={() => {
+              navigate('/profile');
+              if (isMobile) setMobileOpen(false);
+            }}
+          >
             <ListItemIcon>
               <Home size={18} />
             </ListItemIcon>
-            <ListItemText primary="Dashboard" />
+            <ListItemText primary="Profile" />
           </ListItemButton>
 
           <ListItemButton>
@@ -296,7 +303,18 @@ export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
             const Icon = c.icon;
             return (
               <Grid item xs={12} sm={6} md={6} lg={3} key={c.id}>
-                <CardButton gradient={c.color} onClick={() => setSelectedCard(c.id)}>
+                <CardButton
+                  gradient={c.color}
+                  onClick={() => {
+                    if (c.id === 'add') {
+                      navigate('/add-medicine');
+                    } else if (c.id === 'check') {
+                      navigate('/expiry-check');
+                    } else {
+                      setSelectedCard(c.id);
+                    }
+                  }}
+                >
                   <Box sx={{ width: 48, height: 48, borderRadius: 1, background: 'rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={22} />
                   </Box>
@@ -404,6 +422,8 @@ export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
 
         <ChatAssistant open={chatOpen} onClose={() => setChatOpen(false)} />
       </Box>
+      
     </GradientBox>
+    
   );
 }   
