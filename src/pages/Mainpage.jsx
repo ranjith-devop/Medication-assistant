@@ -389,7 +389,7 @@ export default function MedicalAssistantMainPage({ themeMode, setThemeMode }) {
           </Box>
 
           <Box sx={{ width: '100%', overflowX: 'auto' }}>
-            <Table size="small" sx={{ minWidth: 600 }}>
+            <Table size="small" sx={{ minWidth: { xs: 'auto', sm: 600 } }}>
               <TableHead>
                 <TableRow>
                   <TableCell>Name</TableCell>

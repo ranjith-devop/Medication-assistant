@@ -99,9 +99,9 @@ const ChatMessages = ({ messages }) => (
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
         >
-          <Box
+            <Box
             sx={{
-              maxWidth: "80%",
+              maxWidth: { xs: '86%', sm: '80%' },
               alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
               p: 1.2,
               borderRadius: 2,
@@ -211,12 +211,12 @@ const ChatAssistant = () => {
       <Slide direction="up" in={isOpen} mountOnEnter unmountOnExit>
         <Paper
           elevation={15}
-          sx={{
+          sx={(theme) => ({
             position: "fixed",
             bottom: theme.spacing(5),
             right: theme.spacing(5),
-            width: 450,
-            height: 620,
+            width: { xs: '92vw', sm: 450 },
+            height: { xs: '60vh', sm: 620 },
             display: "flex",
             flexDirection: "column",
             borderRadius: 4,
@@ -225,7 +225,7 @@ const ChatAssistant = () => {
             backdropFilter: "blur(12px)",
             color: "#fff",
             zIndex: 2100,
-          }}
+          })}
         >
           <ChatHeader onClose={toggleChat} />
           <ChatActions onAction={handleAction} />

@@ -13,7 +13,7 @@ export default function ExpiryCard({ item }) {
   const colorMap = { safe: 'success', soon: 'warning', urgent: 'error', expired: 'default' };
 
   return (
-    <Card sx={{ width: 320, borderRadius: 2, boxShadow: 3 }}>
+    <Card sx={{ width: { xs: '100%', sm: 320 }, borderRadius: 2, boxShadow: 3 }}>
       <CardContent>
         <Typography variant="h6">{item.name}</Typography>
         <Typography variant="body2" color="text.secondary">{item.manufacturer}</Typography>
